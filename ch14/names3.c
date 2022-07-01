@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>   // for strcpy(), strlen()
 #include <stdlib.h>   // for malloc(), free()
-
+#define SLEN 81
 struct namect {
     char * fname;  // using pointers
     char * lname;
@@ -13,6 +13,7 @@ void getinfo(struct namect *);        // allocates memory
 void makeinfo(struct namect *);
 void showinfo(const struct namect *);
 void cleanup(struct namect *);        // free memory when done
+char * s_gets(char * st, int n);
 
 int main(void)
 {
@@ -30,13 +31,13 @@ void getinfo (struct namect * pst)
 {
     char temp[81];
     printf("Please enter your first name.\n");
-    gets(temp);
+    s_gets(temp, SLEN);
     // allocate memory to hold name
     pst->fname = (char *) malloc(strlen(temp) + 1);
     // copy name to allocated memory
     strcpy(pst->fname, temp);
     printf("Please enter your last name.\n");
-    gets(temp);
+    s_gets(temp, SLEN);
     pst->lname = (char *) malloc(strlen(temp) + 1);
     strcpy(pst->lname, temp);
 }
@@ -57,4 +58,22 @@ void cleanup(struct namect * pst)
 {
     free(pst->fname);
     free(pst->lname);
+}
+
+char * s_gets(char * st, int n)
+{
+    char * ret_val;
+    char * find = NULL;
+
+    ret_val = fgets(st, n, stdin);
+    if (ret_val)
+    {
+        find = strchr(st, '\n');   // look for newline
+        if (find)                  // if the address is not NULL,
+            *find = '\0';          // place a null character there
+        else
+            while (getchar() != '\n')
+                continue;          // dispose of rest of line
+    }
+    return ret_val;
 }
